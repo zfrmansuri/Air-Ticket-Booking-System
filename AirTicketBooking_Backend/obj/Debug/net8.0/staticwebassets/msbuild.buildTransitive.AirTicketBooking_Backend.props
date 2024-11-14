@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\AirTicketBooking_Backend.props" />
+</Project>
