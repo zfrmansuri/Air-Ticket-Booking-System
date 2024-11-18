@@ -1,4 +1,6 @@
 ﻿using AirTicketBooking_Backend.Authentication;
+using AirTicketBooking_Backend.Data;
+using AirTicketBooking_Backend.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,12 +15,14 @@ namespace AirTicketBooking_Backend.Repositories
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
-        public UsersAuthenticationService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public UsersAuthenticationService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, ApplicationDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _context = context;
         }
 
         public async Task<IdentityResult> RegisterUser(ApplicationUser user, string password)
@@ -84,5 +88,113 @@ namespace AirTicketBooking_Backend.Repositories
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+
+        public async Task EditProfile(string userId, EditProfileDto updatedProfile, string currentUserId)
+        {
+            var existingUser = await _userManager.FindByIdAsync(userId.ToString());
+            if (existingUser == null) throw new KeyNotFoundException("User not found");
+
+            // Check if the current user is Admin or the same as the user being edited
+            if (currentUserId != userId.ToString() && !await _userManager.IsInRoleAsync(existingUser, "Admin"))
+            {
+                throw new UnauthorizedAccessException("You do not have permission to edit this profile.");
+            }
+
+            // Update the user's profile
+            existingUser.UserName = updatedProfile.UserName ?? existingUser.UserName;
+            existingUser.Email = updatedProfile.Email ?? existingUser.Email;
+            existingUser.Gender = updatedProfile.Gender ?? existingUser.Gender;
+            existingUser.Address = updatedProfile.Address ?? existingUser.Address;
+            existingUser.PhoneNumber = updatedProfile.PhoneNumber ?? existingUser.PhoneNumber;
+
+            var result = await _userManager.UpdateAsync(existingUser);
+            if (!result.Succeeded)
+            {
+                throw new InvalidOperationException("Error updating user profile.");
+            }
+        }
+
+
+        public async Task DeleteProfile(string userId, string currentUserId)
+        {
+            var userToDelete = await _userManager.FindByIdAsync(userId);
+            if (userToDelete == null)
+                throw new KeyNotFoundException("User not found");
+
+            // Ensure that the current user is an Admin or the same as the user being deleted
+            if (currentUserId != userId && !await _userManager.IsInRoleAsync(userToDelete, "Admin"))
+            {
+                throw new UnauthorizedAccessException("You do not have permission to delete this profile.");
+            }
+
+            // Step 1: Delete bookings and related details for flights owned by the FlightOwner
+            var flights = _context.Flights.Where(f => f.FlightOwnerId == userId).ToList();
+            foreach (var flight in flights)
+            {
+                // Find all bookings for this flight
+                var bookings = _context.Bookings.Where(b => b.FlightId == flight.FlightId).ToList();
+
+                foreach (var booking in bookings)
+                {
+                    // Delete related booking details
+                    var bookingDetails = _context.BookingDetails.Where(bd => bd.BookingId == booking.BookingId).ToList();
+                    _context.BookingDetails.RemoveRange(bookingDetails);
+
+                    // Delete the booking
+                    _context.Bookings.Remove(booking);
+                }
+
+                // Delete related flight seats
+                var flightSeats = _context.FlightSeats.Where(fs => fs.FlightId == flight.FlightId).ToList();
+                _context.FlightSeats.RemoveRange(flightSeats);
+
+                // Delete the flight
+                _context.Flights.Remove(flight);
+            }
+
+            // Save changes after removing all related data
+            await _context.SaveChangesAsync();
+
+            // Step 2: Delete any direct bookings for this user (if the user is a regular User and not a FlightOwner)
+            var userBookings = _context.Bookings.Where(b => b.UserId == userId).ToList();
+            foreach (var booking in userBookings)
+            {
+                var bookingDetails = _context.BookingDetails.Where(bd => bd.BookingId == booking.BookingId).ToList();
+                _context.BookingDetails.RemoveRange(bookingDetails);
+
+                _context.Bookings.Remove(booking);
+            }
+
+            // Save changes again
+            await _context.SaveChangesAsync();
+
+            // Step 3: Finally, delete the user
+            var result = await _userManager.DeleteAsync(userToDelete);
+            if (!result.Succeeded)
+            {
+                throw new InvalidOperationException("Error deleting user profile.");
+            }
+
+            // Commit final changes
+            await _context.SaveChangesAsync();
+        }
+
+
+
+        public async Task<IEnumerable<ApplicationUser>> GetAllUsersByRole(string role)
+        {
+            // Normalize role to a consistent format (e.g., Title Case)
+            var validRoles = new List<string> { "Admin", "User", "FlightOwner" };
+
+            role = validRoles.FirstOrDefault(r => r.Equals(role, StringComparison.OrdinalIgnoreCase));
+
+            if (role == null)
+                throw new ArgumentException("Invalid role specified.");
+
+            var usersInRole = await _userManager.GetUsersInRoleAsync(role);
+            return usersInRole;
+        }
+
     }
 }

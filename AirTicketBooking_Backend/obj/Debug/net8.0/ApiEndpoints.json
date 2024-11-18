@@ -1,6 +1,59 @@
 [
   {
     "ContainingType": "AirTicketBooking_Backend.Controllers.AuthenticationController",
+    "Method": "DeleteProfile",
+    "RelativePath": "api/Authentication/DeleteProfile/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AirTicketBooking_Backend.Controllers.AuthenticationController",
+    "Method": "EditProfile",
+    "RelativePath": "api/Authentication/EditProfile/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "model",
+        "Type": "AirTicketBooking_Backend.DTOs.EditProfileDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AirTicketBooking_Backend.Controllers.AuthenticationController",
+    "Method": "GetUsersByRole",
+    "RelativePath": "api/Authentication/GetUsersByRole/{role}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "role",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AirTicketBooking_Backend.Controllers.AuthenticationController",
     "Method": "Login",
     "RelativePath": "api/Authentication/Login",
     "HttpMethod": "POST",
@@ -65,8 +118,34 @@
   },
   {
     "ContainingType": "AirTicketBooking_Backend.Controllers.BookingController",
+    "Method": "CancelBooking",
+    "RelativePath": "api/Booking/CancelBooking",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "booking_Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AirTicketBooking_Backend.Controllers.BookingController",
     "Method": "GetBookingHistory",
-    "RelativePath": "api/Booking/GetBookingHistory",
+    "RelativePath": "api/Booking/GetBookingHistory_Of_LoggedUser",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AirTicketBooking_Backend.Controllers.BookingController",
+    "Method": "ListAllBooking",
+    "RelativePath": "api/Booking/ListAllBooking",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

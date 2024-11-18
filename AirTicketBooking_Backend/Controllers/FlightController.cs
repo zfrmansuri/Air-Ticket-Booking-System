@@ -18,8 +18,8 @@ namespace AirTicketBooking_Backend.Controllers
             _flightService = flightService;
         }
 
-        [HttpPost("AddFlight")]
-        [Authorize(Roles = "FlightOwner")]  // Only FlightOwner can add flights
+        [HttpPost("AddFlight")]                 // Only FlightOwner can add flights we can also add funtionality to allow 
+        [Authorize(Roles = "FlightOwner")]      //Admin to add file too but then we will have to pass the FlightOwner Id too in the Post request
         public async Task<IActionResult> AddFlight([FromBody] FlightDto flightDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -34,7 +34,7 @@ namespace AirTicketBooking_Backend.Controllers
                 AvailableSeats = flightDto.AvailableSeats,
                 PricePerSeat = flightDto.PricePerSeat,
 
-                //var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;    //
+                //var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;    
 
                 FlightOwnerId = User.FindFirst(ClaimTypes.NameIdentifier).Value // Gets FlightOwnerId from the user's token //there can be a question mark to handle null values like above
             };
@@ -44,7 +44,7 @@ namespace AirTicketBooking_Backend.Controllers
         }
 
         [HttpPut("UpdateFlight/{id}")]
-        [Authorize(Roles = "Admin,FlightOwner")]  // Only Admin or FlightOwner can update flights
+        [Authorize(Roles = "Admin,FlightOwner")]  //Only Admin can Update all Fight & Flight Owner can Update his Flight only.
         public async Task<IActionResult> UpdateFlight(int id, [FromBody] FlightDto flightDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -66,19 +66,27 @@ namespace AirTicketBooking_Backend.Controllers
         }
 
         [HttpDelete("RemoveFlight/{id}")]
-        [Authorize(Roles = "Admin,FlightOwner")]  // Only Admin or FlightOwner can remove flights
+        [Authorize(Roles = "Admin,FlightOwner")]  // Only Admin or FlightOwner can remove flights  
         public async Task<IActionResult> RemoveFlight(int id)
         {
             try
             {
-                await _flightService.RemoveFlight(id);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var isAdmin = User.IsInRole("Admin");
+
+                await _flightService.RemoveFlight(id, userId, isAdmin); // Pass user info to service
                 return Ok("Flight removed successfully.");
             }
             catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
         }
+
 
         [HttpGet("SearchFlights")]
         [AllowAnonymous]  // Publicly accessible
@@ -90,7 +98,7 @@ namespace AirTicketBooking_Backend.Controllers
 
         [HttpGet("GetFlightDetails/{id}")]
         [AllowAnonymous]  // Publicly accessible
-        public async Task<IActionResult> GetFlightDetails(int id)
+        public async Task<IActionResult> GetFlightDetails(int id)     //GetFlightDetailsById
         {
             try
             {

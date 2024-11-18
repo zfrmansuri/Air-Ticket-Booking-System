@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AirTicketBooking_Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class Database_Creation : Migration
+    public partial class CreatingDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -180,7 +180,7 @@ namespace AirTicketBooking_Backend.Migrations
                         column: x => x.FlightOwnerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -194,7 +194,7 @@ namespace AirTicketBooking_Backend.Migrations
                     BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NumberOfSeats = table.Column<int>(type: "int", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -204,7 +204,7 @@ namespace AirTicketBooking_Backend.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Bookings_Flights_FlightId",
                         column: x => x.FlightId,
@@ -241,7 +241,7 @@ namespace AirTicketBooking_Backend.Migrations
                     BookingDetailId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BookingId = table.Column<int>(type: "int", nullable: false),
-                    SeatNumber = table.Column<int>(type: "int", nullable: false),
+                    SeatNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>

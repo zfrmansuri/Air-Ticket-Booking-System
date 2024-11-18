@@ -366,7 +366,7 @@ namespace AirTicketBooking_Backend.Migrations
                     b.HasOne("AirTicketBooking_Backend.Authentication.ApplicationUser", "User")
                         .WithMany("Bookings")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Flight");
@@ -390,7 +390,7 @@ namespace AirTicketBooking_Backend.Migrations
                     b.HasOne("AirTicketBooking_Backend.Authentication.ApplicationUser", "FlightOwner")
                         .WithMany("OwnedFlights")
                         .HasForeignKey("FlightOwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("FlightOwner");

@@ -23,14 +23,14 @@ namespace AirTicketBooking_Backend.Data
                 .HasOne(f => f.FlightOwner)
                 .WithMany(u => u.OwnedFlights)
                 .HasForeignKey(f => f.FlightOwnerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade); // Cascade delete flights when owner is deleted
 
             // Booking-User (One-to-Many relationship)
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.User)
                 .WithMany(u => u.Bookings)
                 .HasForeignKey(b => b.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade); // Cascade delete bookings when user is deleted
 
             // Booking-Flight (Many-to-One relationship)
             modelBuilder.Entity<Booking>()
@@ -53,5 +53,6 @@ namespace AirTicketBooking_Backend.Data
                 .HasForeignKey(fs => fs.FlightId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
+
     }
 }

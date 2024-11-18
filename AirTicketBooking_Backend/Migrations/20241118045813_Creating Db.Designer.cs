@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AirTicketBooking_Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241112184738_Database_Creation")]
-    partial class Database_Creation
+    [Migration("20241118045813_Creating Db")]
+    partial class CreatingDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -115,8 +115,9 @@ namespace AirTicketBooking_Backend.Migrations
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
@@ -148,8 +149,9 @@ namespace AirTicketBooking_Backend.Migrations
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
-                    b.Property<int>("SeatNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("SeatNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BookingDetailId");
 
@@ -367,7 +369,7 @@ namespace AirTicketBooking_Backend.Migrations
                     b.HasOne("AirTicketBooking_Backend.Authentication.ApplicationUser", "User")
                         .WithMany("Bookings")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Flight");
@@ -391,7 +393,7 @@ namespace AirTicketBooking_Backend.Migrations
                     b.HasOne("AirTicketBooking_Backend.Authentication.ApplicationUser", "FlightOwner")
                         .WithMany("OwnedFlights")
                         .HasForeignKey("FlightOwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("FlightOwner");

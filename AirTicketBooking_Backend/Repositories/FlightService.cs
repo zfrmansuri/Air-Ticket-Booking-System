@@ -33,15 +33,15 @@ namespace AirTicketBooking_Backend.Repositories
         }
 
         // Method to generate seats
-        private List<FlightSeat> GenerateSeats(int flightId, int availableSeats)
+        private List<FlightSeat> GenerateSeats(int flightId, int seatCount, int startIndex = 1)
         {
             var seats = new List<FlightSeat>();
-            var rows = new[] { "A", "B", "C", "D" };  // Seat letters
+            var rows = new[] { "A", "B", "C", "D" };
 
-            for (int i = 1; i <= availableSeats; i++)
+            for (int i = startIndex; i < startIndex + seatCount; i++)
             {
-                var rowIndex = (i - 1) / rows.Length; // To loop over numbers for rows
-                var seatLetter = rows[(i - 1) % rows.Length]; // Cycle through A, B, C, D
+                var rowIndex = (i - 1) / rows.Length; // Row number
+                var seatLetter = rows[(i - 1) % rows.Length]; // Seat letter
                 var seatNumber = $"{seatLetter}{rowIndex + 1}";
 
                 seats.Add(new FlightSeat
@@ -57,8 +57,8 @@ namespace AirTicketBooking_Backend.Repositories
 
         public async Task UpdateFlight(int flightId, FlightDto updatedFlight, string userId)
         {
-            //Retrive the flight from the databse
-            var existingFlight = await _dbContext.Flights.FindAsync(flightId);
+            // Retrieve the flight from the database
+            var existingFlight = await _dbContext.Flights.Include(f => f.FlightSeats).FirstOrDefaultAsync(f => f.FlightId == flightId);
             if (existingFlight == null) throw new KeyNotFoundException("Flight not found");
 
             // Retrieve the current user
@@ -69,34 +69,71 @@ namespace AirTicketBooking_Backend.Repositories
             var userRoles = await _userManager.GetRolesAsync(user);
             if (userRoles == null) throw new InvalidOperationException("Unable to retrieve user roles");
 
-            //Checking if the user is Admin
+            // Checking if the user is Admin
             bool isAdmin = userRoles.Contains("Admin");
 
-            //throw error when user is not Admin neither Owner of existingFlight
+            // Throw error when the user is neither Admin nor the Owner of the existing flight
             if (!isAdmin && existingFlight.FlightOwnerId != userId)
             {
                 throw new UnauthorizedAccessException("You do not have permission to update this flight.");
             }
 
+            // Update flight details
             existingFlight.FlightNumber = updatedFlight.FlightNumber;
             existingFlight.Origin = updatedFlight.Origin;
             existingFlight.Destination = updatedFlight.Destination;
             existingFlight.DepartureDate = updatedFlight.DepartureDate;
-            existingFlight.AvailableSeats = updatedFlight.AvailableSeats;
             existingFlight.PricePerSeat = updatedFlight.PricePerSeat;
+
+            // Handle seat count changes
+            if (existingFlight.AvailableSeats != updatedFlight.AvailableSeats)
+            {
+                UpdateSeats(existingFlight, updatedFlight.AvailableSeats);
+                existingFlight.AvailableSeats = updatedFlight.AvailableSeats;
+            }
 
             _dbContext.Flights.Update(existingFlight);
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task RemoveFlight(int flightId)
+        // Helper method to update seats
+        private void UpdateSeats(Flight flight, int newSeatCount)
+        {
+            var currentSeats = flight.FlightSeats.Count;
+
+            if (newSeatCount > currentSeats)
+            {
+                // Add new seats
+                var seatsToAdd = newSeatCount - currentSeats;
+                var newSeats = GenerateSeats(flight.FlightId, seatsToAdd, currentSeats + 1);
+                _dbContext.FlightSeats.AddRange(newSeats);
+            }
+            else if (newSeatCount < currentSeats)
+            {
+                // Remove extra seats
+                var seatsToRemove = flight.FlightSeats
+                    .OrderByDescending(fs => fs.SeatNumber)
+                    .Take(currentSeats - newSeatCount)
+                    .ToList();
+
+                _dbContext.FlightSeats.RemoveRange(seatsToRemove);
+            }
+        }
+
+        public async Task RemoveFlight(int flightId, string userId, bool isAdmin)
         {
             var flight = await _dbContext.Flights.FindAsync(flightId);
-            if (flight == null) throw new KeyNotFoundException("Flight not found");
+            if (flight == null)
+                throw new KeyNotFoundException("Flight not found");
+
+            // Check if the current user is Admin or Owener of the Flight
+            if (!isAdmin && flight.FlightOwnerId != userId)
+                throw new UnauthorizedAccessException("You are not authorized to remove this flight.");
 
             _dbContext.Flights.Remove(flight);
             await _dbContext.SaveChangesAsync();
         }
+
 
         public async Task<IEnumerable<Flight>> SearchFlights(string origin, string destination, DateTime? date)
         {
