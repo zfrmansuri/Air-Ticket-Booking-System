@@ -45,6 +45,17 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+//Adding CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -107,12 +118,14 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseCors("AllowAllOrigins"); // Using CORS policy
+
 app.UseAuthentication(); // Adds authentication middleware
 
 app.UseAuthorization();
 
 app.MapControllers();
 
-await SeedRoles(app.Services);//Calling SeedRoles Method
+//await SeedRoles(app.Services);//Calling SeedRoles Method
 
 app.Run();

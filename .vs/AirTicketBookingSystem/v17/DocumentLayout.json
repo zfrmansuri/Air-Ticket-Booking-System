@@ -7,6 +7,10 @@
       "RelativeMoniker": "D:0:0:{EA9ED101-7928-46D6-98F1-0043066BA229}|AirTicketBooking_Backend\\AirTicketBooking_Backend.csproj|solutionrelative:airticketbooking_backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{EA9ED101-7928-46D6-98F1-0043066BA229}|AirTicketBooking_Backend\\AirTicketBooking_Backend.csproj|c:\\users\\mrraj\\source\\repos\\airticketbookingsystem\\airticketbooking_backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{EA9ED101-7928-46D6-98F1-0043066BA229}|AirTicketBooking_Backend\\AirTicketBooking_Backend.csproj|solutionrelative:airticketbooking_backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{EA9ED101-7928-46D6-98F1-0043066BA229}|AirTicketBooking_Backend\\AirTicketBooking_Backend.csproj|c:\\users\\mrraj\\source\\repos\\airticketbookingsystem\\airticketbooking_backend\\dtos\\flightdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EA9ED101-7928-46D6-98F1-0043066BA229}|AirTicketBooking_Backend\\AirTicketBooking_Backend.csproj|solutionrelative:airticketbooking_backend\\dtos\\flightdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -43,16 +47,16 @@
       "RelativeMoniker": "D:0:0:{EA9ED101-7928-46D6-98F1-0043066BA229}|AirTicketBooking_Backend\\AirTicketBooking_Backend.csproj|solutionrelative:airticketbooking_backend\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\Migrations\\20241118045813_Creating Db.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AirTicketBooking_Backend\\Migrations\\20241118045813_Creating Db.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\Migrations\\20241118045701_Db creation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AirTicketBooking_Backend\\Migrations\\20241118045701_Db creation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EA9ED101-7928-46D6-98F1-0043066BA229}|AirTicketBooking_Backend\\AirTicketBooking_Backend.csproj|c:\\users\\mrraj\\source\\repos\\airticketbookingsystem\\airticketbooking_backend\\repositories\\iusersauthenticationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EA9ED101-7928-46D6-98F1-0043066BA229}|AirTicketBooking_Backend\\AirTicketBooking_Backend.csproj|solutionrelative:airticketbooking_backend\\repositories\\iusersauthenticationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EA9ED101-7928-46D6-98F1-0043066BA229}|AirTicketBooking_Backend\\AirTicketBooking_Backend.csproj|c:\\users\\mrraj\\source\\repos\\airticketbookingsystem\\airticketbooking_backend\\migrations\\20241118045813_creating db.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EA9ED101-7928-46D6-98F1-0043066BA229}|AirTicketBooking_Backend\\AirTicketBooking_Backend.csproj|solutionrelative:airticketbooking_backend\\migrations\\20241118045813_creating db.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -62,7 +66,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -70,7 +74,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "BookingController.cs",
               "DocumentMoniker": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\Controllers\\BookingController.cs",
               "RelativeDocumentMoniker": "AirTicketBooking_Backend\\Controllers\\BookingController.cs",
@@ -79,7 +83,19 @@
               "ViewState": "AgIAAE8AAACAAAAAAAAkwGMAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-14T10:35:13.408Z",
-              "IsPinned": true,
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\appsettings.json",
+              "RelativeDocumentMoniker": "AirTicketBooking_Backend\\appsettings.json",
+              "ToolTip": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\appsettings.json",
+              "RelativeToolTip": "AirTicketBooking_Backend\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-11-18T06:58:27.933Z",
               "EditorCaption": ""
             },
             {
@@ -90,14 +106,14 @@
               "RelativeDocumentMoniker": "AirTicketBooking_Backend\\Program.cs",
               "ToolTip": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\Program.cs",
               "RelativeToolTip": "AirTicketBooking_Backend\\Program.cs",
-              "ViewState": "AgIAAFEAAAAAAAAAAAAwwGMAAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAAFoAAACAaGZmZmYkwHAAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-18T06:28:52.132Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Flight.cs",
               "DocumentMoniker": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\Models\\Flight.cs",
               "RelativeDocumentMoniker": "AirTicketBooking_Backend\\Models\\Flight.cs",
@@ -105,12 +121,11 @@
               "RelativeToolTip": "AirTicketBooking_Backend\\Models\\Flight.cs",
               "ViewState": "AgIAAAcAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-18T06:28:09.847Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-18T06:28:09.847Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "FlightDto.cs",
               "DocumentMoniker": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\DTOs\\FlightDto.cs",
               "RelativeDocumentMoniker": "AirTicketBooking_Backend\\DTOs\\FlightDto.cs",
@@ -118,12 +133,11 @@
               "RelativeToolTip": "AirTicketBooking_Backend\\DTOs\\FlightDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-18T06:27:08.146Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-18T06:27:08.146Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "FlightController.cs",
               "DocumentMoniker": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\Controllers\\FlightController.cs",
               "RelativeDocumentMoniker": "AirTicketBooking_Backend\\Controllers\\FlightController.cs",
@@ -131,12 +145,11 @@
               "RelativeToolTip": "AirTicketBooking_Backend\\Controllers\\FlightController.cs",
               "ViewState": "AgIAAFIAAACAAAAAAAAkwA8AAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-18T06:25:22.697Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-18T06:25:22.697Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "FlightService.cs",
               "DocumentMoniker": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\Repositories\\FlightService.cs",
               "RelativeDocumentMoniker": "AirTicketBooking_Backend\\Repositories\\FlightService.cs",
@@ -144,12 +157,11 @@
               "RelativeToolTip": "AirTicketBooking_Backend\\Repositories\\FlightService.cs",
               "ViewState": "AgIAAIIAAAAAMzMzMzMlwBIAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-18T06:23:27.483Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-18T06:23:27.483Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "BookingService.cs",
               "DocumentMoniker": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\Repositories\\BookingService.cs",
               "RelativeDocumentMoniker": "AirTicketBooking_Backend\\Repositories\\BookingService.cs",
@@ -157,12 +169,11 @@
               "RelativeToolTip": "AirTicketBooking_Backend\\Repositories\\BookingService.cs",
               "ViewState": "AgIAAEYAAAAAZ2ZmZmYSwBAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-18T06:09:49.14Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-18T06:09:49.14Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 13,
               "Title": "20241118045813_Creating Db.cs",
               "DocumentMoniker": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\Migrations\\20241118045813_Creating Db.cs",
               "RelativeDocumentMoniker": "AirTicketBooking_Backend\\Migrations\\20241118045813_Creating Db.cs",
@@ -170,12 +181,11 @@
               "RelativeToolTip": "AirTicketBooking_Backend\\Migrations\\20241118045813_Creating Db.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-18T04:58:13.956Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-18T04:58:13.956Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "AirTicketBooking_Backend\\Data\\ApplicationDbContext.cs",
@@ -183,12 +193,11 @@
               "RelativeToolTip": "AirTicketBooking_Backend\\Data\\ApplicationDbContext.cs",
               "ViewState": "AgIAAA8AAAAAAAAAAAAowDEAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-18T04:46:01.316Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-18T04:46:01.316Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "AuthenticationController.cs",
               "DocumentMoniker": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\Controllers\\AuthenticationController.cs",
               "RelativeDocumentMoniker": "AirTicketBooking_Backend\\Controllers\\AuthenticationController.cs",
@@ -196,12 +205,11 @@
               "RelativeToolTip": "AirTicketBooking_Backend\\Controllers\\AuthenticationController.cs",
               "ViewState": "AgIAADIAAAAAAAAAAAAgwDQAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-16T12:42:05.947Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-16T12:42:05.947Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "UsersAuthenticationService.cs",
               "DocumentMoniker": "C:\\Users\\mrraj\\source\\repos\\AirTicketBookingSystem\\AirTicketBooking_Backend\\Repositories\\UsersAuthenticationService.cs",
               "RelativeDocumentMoniker": "AirTicketBooking_Backend\\Repositories\\UsersAuthenticationService.cs",
@@ -209,8 +217,7 @@
               "RelativeToolTip": "AirTicketBooking_Backend\\Repositories\\UsersAuthenticationService.cs",
               "ViewState": "AgIAABEAAAAAAAAAAAAkwLkAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-16T13:33:32.846Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-16T13:33:32.846Z"
             },
             {
               "$type": "Document",
@@ -222,8 +229,7 @@
               "RelativeToolTip": "AirTicketBooking_Backend\\Repositories\\IUsersAuthenticationService.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAAA8AAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-17T18:20:28.918Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-17T18:20:28.918Z"
             },
             {
               "$type": "Document",
@@ -235,8 +241,7 @@
               "RelativeToolTip": "AirTicketBooking_Backend\\Migrations\\20241118045701_Db creation.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-18T04:57:02.204Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-18T04:57:02.204Z"
             }
           ]
         }
