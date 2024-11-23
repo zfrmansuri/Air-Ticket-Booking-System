@@ -6,5 +6,3 @@
         public int NumberOfSeats { get; set; }
     }
 }
-
-// This is bookingDTO
