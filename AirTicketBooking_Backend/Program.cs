@@ -95,7 +95,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-//Seeding Roles to the AspNetRoles Table
+//Seeding Roles to the AspNetRoles Table just for initial run only
 async Task SeedRoles(IServiceProvider serviceProvider)
 {
     using var scope = serviceProvider.CreateScope();
