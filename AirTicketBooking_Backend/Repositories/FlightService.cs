@@ -151,7 +151,7 @@ namespace AirTicketBooking_Backend.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<Flight> GetFlightDetails(int flightId)
+        public async Task<Flight> GetFlightDetails(int flightId)      //depth exception after removing code from program.cs vivek has given
         {
             var flight = await _dbContext.Flights
                 .Include(f => f.FlightSeats) // Include seats if needed

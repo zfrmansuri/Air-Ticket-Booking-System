@@ -66,7 +66,7 @@ namespace AirTicketBooking_Backend.Controllers
         }
 
         [HttpDelete("RemoveFlight/{id}")]
-        [Authorize(Roles = "Admin,FlightOwner")]  // Only Admin or FlightOwner can remove flights  
+        [Authorize(Roles = "Admin,FlightOwner")]  // Only Admin and FlightOwner can remove flights  
         public async Task<IActionResult> RemoveFlight(int id)
         {
             try

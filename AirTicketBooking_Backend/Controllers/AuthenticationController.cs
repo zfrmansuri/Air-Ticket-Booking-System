@@ -76,7 +76,7 @@ namespace AirTicketBooking_Backend.Controllers
             try
             {
                 var token = await _authService.Login(model.Email, model.Password);
-                return Ok(new { Token = token });                                  // why we are coying token to other variable why we will see later
+                return Ok(new { Token = token });                                  
             }
             catch (UnauthorizedAccessException ex)
             {

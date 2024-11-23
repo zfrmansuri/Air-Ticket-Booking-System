@@ -93,7 +93,6 @@ namespace AirTicketBooking_Backend.Repositories
             // Mark the seats as available
             flightSeats.ForEach(fs => fs.IsAvailable = true);
 
-            // Refund logic can be handled here if required
 
             // Remove booking and details
             _context.BookingDetails.RemoveRange(bookingDetails);
@@ -107,12 +106,12 @@ namespace AirTicketBooking_Backend.Repositories
         {
             // Fetch all bookings for the specified flight owner, including the user name and flight details
             var bookings = await _context.Bookings
-                .Include(b => b.Flight)                // Include flight details
-                .Include(b => b.User)                   // Include user details (ApplicationUser)
+                .Include(b => b.Flight)               
+                .Include(b => b.User)                  
                 .Where(b => b.Flight.FlightOwnerId == flightOwnerId)   // Filter by flight owner
                 .ToListAsync();
 
-            // Map the data to the DTO (BookingRetrievalDto) format to include user info
+            // Map the data to the (BookingRetrievalDto)
             var bookingDtos = bookings.Select(b => new BookingRetrievalDto
             {
                 BookingId = b.BookingId,
@@ -120,10 +119,10 @@ namespace AirTicketBooking_Backend.Repositories
                 NumberOfSeats = b.NumberOfSeats,
                 TotalPrice = b.TotalPrice,
                 Status = b.Status,
-                FlightNumber = b.Flight.FlightNumber, // Include flight number
-                Origin = b.Flight.Origin,             // Include origin
-                Destination = b.Flight.Destination,   // Include destination
-                UserName = b.User.UserName            // Include the username from ApplicationUser
+                FlightNumber = b.Flight.FlightNumber, 
+                Origin = b.Flight.Origin,             
+                Destination = b.Flight.Destination,   
+                UserName = b.User.UserName          
             }).ToList();
 
             return bookingDtos;
@@ -133,8 +132,8 @@ namespace AirTicketBooking_Backend.Repositories
         {
             // Fetch all bookings across all flights
             var bookings = await _context.Bookings
-                .Include(b => b.Flight)                // Include flight details
-                .Include(b => b.User)                   // Include user details (ApplicationUser)
+                .Include(b => b.Flight)                
+                .Include(b => b.User)                
                 .ToListAsync();
 
             // Map the data to the DTO format (BookingRetrievalDto)
@@ -145,10 +144,10 @@ namespace AirTicketBooking_Backend.Repositories
                 NumberOfSeats = b.NumberOfSeats,
                 TotalPrice = b.TotalPrice,
                 Status = b.Status,
-                FlightNumber = b.Flight.FlightNumber, // Include flight number
-                Origin = b.Flight.Origin,             // Include origin
-                Destination = b.Flight.Destination,   // Include destination
-                UserName = b.User.UserName            // Include the username from ApplicationUser
+                FlightNumber = b.Flight.FlightNumber, 
+                Origin = b.Flight.Origin,             
+                Destination = b.Flight.Destination,   
+                UserName = b.User.UserName            
             }).ToList();
 
             return bookingDtos;
