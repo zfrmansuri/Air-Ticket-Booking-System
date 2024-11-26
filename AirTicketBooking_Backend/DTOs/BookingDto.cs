@@ -6,3 +6,5 @@
         public int NumberOfSeats { get; set; }
     }
 }
+
+// Bookings DTOs
