@@ -26,20 +26,28 @@ namespace AirTicketBooking_Backend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = new ApplicationUser
+            try
             {
-                UserName = model.UserName,
-                Email = model.Email,
-                Gender = model.Gender,
-                Address = model.Address,
-                PhoneNumber = model.PhoneNumber
-            };
+                var user = new ApplicationUser
+                {
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    Gender = model.Gender,
+                    Address = model.Address,
+                    PhoneNumber = model.PhoneNumber
+                };
 
-            var result = await _authService.RegisterUser(user, model.Password);
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
+                var result = await _authService.RegisterUser(user, model.Password);
+                if (!result.Succeeded)
+                    return BadRequest(new { Message = "User registration failed.", Errors = result.Errors });
 
-            return Ok("User registered successfully!");
+                return Ok(new { Message = "User registered successfully!" });
+            }
+            catch (Exception ex)
+            {
+                // Generic catch-all exception handler
+                return StatusCode(500, new { Message = "An error occurred while registering the user.", Details = ex.Message });
+            }
         }
 
         // POST: api/Authentication/RegisterFlightOwner
@@ -50,20 +58,27 @@ namespace AirTicketBooking_Backend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = new ApplicationUser
+            try
             {
-                UserName = model.UserName,
-                Email = model.Email,
-                Gender = model.Gender,
-                Address = model.Address,
-                PhoneNumber = model.PhoneNumber
-            };
+                var user = new ApplicationUser
+                {
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    Gender = model.Gender,
+                    Address = model.Address,
+                    PhoneNumber = model.PhoneNumber
+                };
 
-            var result = await _authService.RegisterFlightOwner(user, model.Password);
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
+                var result = await _authService.RegisterFlightOwner(user, model.Password);
+                if (!result.Succeeded)
+                    return BadRequest(new { Message = "Flight owner registration failed.", Errors = result.Errors });
 
-            return Ok("Flight Owner registered successfully!");
+                return Ok(new { Message = "Flight Owner registered successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while registering the flight owner.", Details = ex.Message });
+            }
         }
 
         // POST: api/Authentication/Login
@@ -76,14 +91,19 @@ namespace AirTicketBooking_Backend.Controllers
             try
             {
                 var token = await _authService.Login(model.Email, model.Password);
-                return Ok(new { Token = token });                                  
+                return Ok(new { Token = token });
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized(ex.Message);
+                return Unauthorized(new { Message = "Invalid login credentials.", Details = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while attempting to log in.", Details = ex.Message });
             }
         }
 
+        // PUT: api/Authentication/EditProfile/{id}
         [Authorize]
         [HttpPut("EditProfile/{id}")]
         public async Task<IActionResult> EditProfile(string id, [FromBody] EditProfileDto model)
@@ -99,24 +119,28 @@ namespace AirTicketBooking_Backend.Controllers
                 if (User.IsInRole("Admin") || userId == id.ToString())
                 {
                     await _authService.EditProfile(id, model, userId);
-                    return Ok("Profile updated successfully.");
+                    return Ok(new { Message = "Profile updated successfully." });
                 }
                 else
                 {
-                    return Unauthorized(new { message = "You do not have permission to edit this profile." });
+                    return Unauthorized(new { Message = "You do not have permission to edit this profile." });
                 }
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new { Message = "Profile not found.", Details = ex.Message });
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized(ex.Message);
+                return Unauthorized(new { Message = "Access denied.", Details = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while updating the profile.", Details = ex.Message });
             }
         }
 
-
+        // DELETE: api/Authentication/DeleteProfile/{id}
         [Authorize]
         [HttpDelete("DeleteProfile/{id}")]
         public async Task<IActionResult> DeleteProfile(string id)
@@ -129,25 +153,28 @@ namespace AirTicketBooking_Backend.Controllers
                 if (User.IsInRole("Admin") || userId == id.ToString())
                 {
                     await _authService.DeleteProfile(id, userId);
-                    return Ok("Profile deleted successfully.");
+                    return Ok(new { Message = "Profile deleted successfully." });
                 }
                 else
                 {
-                    return Unauthorized(new { message = "You do not have permission to delete this profile." });
+                    return Unauthorized(new { Message = "You do not have permission to delete this profile." });
                 }
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new { Message = "Profile not found.", Details = ex.Message });
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized(ex.Message);
+                return Unauthorized(new { Message = "Access denied.", Details = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while deleting the profile.", Details = ex.Message });
             }
         }
 
-
-
+        // GET: api/Authentication/GetUsersByRole/{role}
         [HttpGet("GetUsersByRole/{role}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUsersByRole(string role)
@@ -170,10 +197,12 @@ namespace AirTicketBooking_Backend.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new { Message = "Invalid role specified.", Details = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving users by role.", Details = ex.Message });
             }
         }
-
-
     }
 }

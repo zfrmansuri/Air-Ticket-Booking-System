@@ -3,7 +3,6 @@ using AirTicketBooking_Backend.Models;
 using AirTicketBooking_Backend.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace AirTicketBooking_Backend.Controllers
@@ -18,9 +17,8 @@ namespace AirTicketBooking_Backend.Controllers
         {
             _bookingService = bookingService;
         }
-        
-        
-        //Tried Manual AUuthorizarion
+
+        // POST: api/Booking/BookTicket
         [HttpPost("BookTicket")]
         public async Task<IActionResult> BookTicket([FromBody] BookingDto bookingDto)
         {
@@ -29,7 +27,7 @@ namespace AirTicketBooking_Backend.Controllers
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
-                return Unauthorized("User not authorized.");
+                return Unauthorized(new { Message = "User not authorized." });
 
             var booking = new Booking
             {
@@ -37,36 +35,51 @@ namespace AirTicketBooking_Backend.Controllers
                 FlightId = bookingDto.FlightId,
                 BookingDate = DateTime.Now,
                 NumberOfSeats = bookingDto.NumberOfSeats,
-                //TotalPrice  - This Field will be added by Services
                 Status = "Confirmed"
             };
 
             try
             {
                 var bookingId = await _bookingService.BookTicket(booking);
-                return Ok(new { BookingId = bookingId });
+                return Ok(new { BookingId = bookingId, Message = "Booking completed successfully." });
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new { Message = "Booking failed. The specified flight could not be found.", Details = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { Message = "Booking failed due to invalid operation.", Details = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while booking the ticket.", Details = ex.Message });
             }
         }
 
-
         // GET: api/Booking/GetBookingHistory_Of_LoggedUser
         [HttpGet("GetBookingHistory_Of_LoggedUser")]
-        public async Task<IActionResult> GetBookingHistory()     
+        public async Task<IActionResult> GetBookingHistory()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var bookings = await _bookingService.GetBookingHistory(userId);
-            return Ok(bookings);
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new { Message = "User not authorized." });
+
+                var bookings = await _bookingService.GetBookingHistory(userId);
+
+                if (bookings == null || !bookings.Any())
+                    return NotFound(new { Message = "No booking history found for the current user." });
+
+                return Ok(bookings);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving booking history.", Details = ex.Message });
+            }
         }
 
-        
         // DELETE: api/Booking/CancelBooking/{id}
         [HttpDelete("CancelBooking")]
         public async Task<IActionResult> CancelBooking(int booking_Id)
@@ -78,45 +91,57 @@ namespace AirTicketBooking_Backend.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new { Message = "Cancellation failed. The specified booking could not be found.", Details = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while canceling the booking.", Details = ex.Message });
             }
         }
 
-
+        // GET: api/Booking/ListAllBooking
         [HttpGet("ListAllBooking")]
-        [Authorize(Roles = "FlightOwner, Admin")] 
-        public async Task<IActionResult> ListAllBooking()     //List all the bookings if logged as ADMIN , while logged as FlightOwner display bookings for his flight only
+        [Authorize(Roles = "FlightOwner, Admin")]
+        public async Task<IActionResult> ListAllBooking()
         {
-            // Get the current user id
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized(new { Message = "Invalid access token." });
-
-            // Check if the user is an Admin
-            var isAdmin = User.IsInRole("Admin");
-
-            // Get bookings based on the user's role
-            IEnumerable<BookingRetrievalDto> bookings;
-
-            if (isAdmin)
+            try
             {
-                // Admin can see all bookings
-                bookings = await _bookingService.ListAllBookingsForAdmin();
+                // Get the current user id
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new { Message = "Invalid access token." });
+
+                // Check if the user is an Admin
+                var isAdmin = User.IsInRole("Admin");
+
+                // Get bookings based on the user's role
+                IEnumerable<BookingRetrievalDto> bookings;
+
+                if (isAdmin)
+                {
+                    // Admin can see all bookings
+                    bookings = await _bookingService.ListAllBookingsForAdmin();
+                }
+                else
+                {
+                    // FlightOwner can see only their bookings
+                    bookings = await _bookingService.ListAllBooking(userId);
+                }
+
+                // If no bookings found, return NotFound
+                if (bookings == null || !bookings.Any())
+                    return NotFound(new { Message = "No bookings found." });
+
+                return Ok(bookings);
             }
-            else
+            catch (UnauthorizedAccessException ex)
             {
-                // FlightOwner can see only their bookings
-                bookings = await _bookingService.ListAllBooking(userId);
+                return Unauthorized(new { Message = "Access denied. You do not have the necessary permissions.", Details = ex.Message });
             }
-
-            // If no bookings found, return NotFound
-            if (bookings == null || !bookings.Any())
-                return NotFound(new { Message = "No bookings found." });
-
-            return Ok(bookings);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving bookings.", Details = ex.Message });
+            }
         }
-
-
     }
 }
