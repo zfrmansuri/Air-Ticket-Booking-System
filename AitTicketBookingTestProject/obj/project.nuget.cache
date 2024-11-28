@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "dgSpecHash": "pcGKcNlrblM=",
+  "success": false,
+  "projectFilePath": "C:\\Users\\Admin\\Desktop\\Domain Case Study\\AitTicketBookingTestProject\\AitTicketBookingTestProject.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1201",
+      "level": "Error",
+      "message": "Project AirTicketBooking_Backend is not compatible with net6.0 (.NETCoreApp,Version=v6.0). Project AirTicketBooking_Backend supports: net8.0 (.NETCoreApp,Version=v8.0)",
+      "libraryId": "AirTicketBooking_Backend",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    }
+  ]
+}
