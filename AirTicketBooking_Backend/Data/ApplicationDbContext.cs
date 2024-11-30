@@ -7,10 +7,10 @@ namespace AirTicketBooking_Backend.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<Flight> Flights { get; set; }
-        public DbSet<Booking> Bookings { get; set; }
-        public DbSet<BookingDetail> BookingDetails { get; set; }
-        public DbSet<FlightSeat> FlightSeats { get; set; }
+        public virtual DbSet<Flight> Flights { get; set; }
+        public virtual DbSet<Booking> Bookings { get; set; }
+        public virtual DbSet<BookingDetail> BookingDetails { get; set; }
+        public virtual DbSet<FlightSeat> FlightSeats { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
