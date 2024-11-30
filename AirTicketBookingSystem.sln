@@ -5,7 +5,7 @@ VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AirTicketBooking_Backend", "AirTicketBooking_Backend\AirTicketBooking_Backend.csproj", "{EA9ED101-7928-46D6-98F1-0043066BA229}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AitTicketBookingTestProject", "AitTicketBookingTestProject\AitTicketBookingTestProject.csproj", "{14596627-893D-4DF0-A6D6-D24E03EE09F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AirTicketBooking_Testing", "AitTicketBookingTestProject\AirTicketBooking_Testing.csproj", "{14596627-893D-4DF0-A6D6-D24E03EE09F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
