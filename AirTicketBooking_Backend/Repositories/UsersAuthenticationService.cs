@@ -53,14 +53,22 @@ namespace AirTicketBooking_Backend.Repositories
             return result;
         }
 
-        public async Task<string> Login(string email, string password)
+        public async Task<object> Login(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null || !await _userManager.CheckPasswordAsync(user, password))
                 throw new UnauthorizedAccessException("Invalid credentials");
 
             var roles = await _userManager.GetRolesAsync(user);
-            return GenerateJwtToken(user, roles);
+            var token = GenerateJwtToken(user, roles);
+
+            return new
+            {
+                Token = token, // The generated JWT token
+                Roles = roles, // List of roles
+                UserName = user.UserName, // Include username for convenience
+                UserId = user.Id // Include user ID for client-side use
+            };
         }
 
         private string GenerateJwtToken(ApplicationUser user, IList<string> roles)
