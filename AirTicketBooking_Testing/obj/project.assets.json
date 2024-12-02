@@ -3486,11 +3486,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Admin\\Desktop\\Domain Case Study\\AitTicketBookingTestProject\\AirTicketBooking_Testing.csproj",
+      "projectUniqueName": "C:\\Users\\Admin\\Desktop\\Domain Case Study\\AirTicketBooking_Testing\\AirTicketBooking_Testing.csproj",
       "projectName": "AirTicketBooking_Testing",
-      "projectPath": "C:\\Users\\Admin\\Desktop\\Domain Case Study\\AitTicketBookingTestProject\\AirTicketBooking_Testing.csproj",
+      "projectPath": "C:\\Users\\Admin\\Desktop\\Domain Case Study\\AirTicketBooking_Testing\\AirTicketBooking_Testing.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Admin\\Desktop\\Domain Case Study\\AitTicketBookingTestProject\\obj\\",
+      "outputPath": "C:\\Users\\Admin\\Desktop\\Domain Case Study\\AirTicketBooking_Testing\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
