@@ -6,7 +6,7 @@ namespace AirTicketBooking_Backend.Repositories
 {
     public interface IUsersAuthenticationService
     {
-        Task<string> Login(string email, string password);
+        Task<object> Login(string email, string password);
         Task<IdentityResult> RegisterFlightOwner(ApplicationUser user, string password);
         Task<IdentityResult> RegisterUser(ApplicationUser user, string password);
         Task EditProfile(string userId, EditProfileDto updatedProfile, string currentUserId);
