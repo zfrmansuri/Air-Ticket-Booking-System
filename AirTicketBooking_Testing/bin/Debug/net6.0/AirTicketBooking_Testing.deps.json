@@ -9,9 +9,11 @@
       "AirTicketBooking_Testing/1.0.0": {
         "dependencies": {
           "AirTicketBooking_Backend": "1.0.0",
+          "Microsoft.EntityFrameworkCore": "6.0.36",
           "Microsoft.EntityFrameworkCore.InMemory": "6.0.36",
           "Microsoft.NET.Test.Sdk": "17.5.0",
           "Moq": "4.20.72",
+          "Moq.EntityFrameworkCore": "6.0.1.4",
           "NUnit": "3.13.3",
           "NUnit.Analyzers": "3.6.1",
           "NUnit3TestAdapter": "4.4.2",
@@ -698,6 +700,18 @@
           }
         }
       },
+      "Moq.EntityFrameworkCore/6.0.1.4": {
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "6.0.36",
+          "Moq": "4.20.72"
+        },
+        "runtime": {
+          "lib/net6.0/Moq.EntityFrameworkCore.dll": {
+            "assemblyVersion": "5.0.0.0",
+            "fileVersion": "5.0.2.0"
+          }
+        }
+      },
       "NETStandard.Library/2.0.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "3.1.9"
@@ -1239,6 +1253,13 @@
       "sha512": "sha512-EA55cjyNn8eTNWrgrdZJH5QLFp2L43oxl1tlkoYUKIE9pRwL784OWiTXeCV5ApS+AMYEAlt7Fo03A2XfouvHmQ==",
       "path": "moq/4.20.72",
       "hashPath": "moq.4.20.72.nupkg.sha512"
+    },
+    "Moq.EntityFrameworkCore/6.0.1.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-AU2ksid0n2VPmG+qKSUXs4ZoZNbZXdLs/mkuGQ7JBAefzYNF/6qMJlJwDTF2iW2C0guiaLqtNzjPiAAJKvSJlQ==",
+      "path": "moq.entityframeworkcore/6.0.1.4",
+      "hashPath": "moq.entityframeworkcore.6.0.1.4.nupkg.sha512"
     },
     "NETStandard.Library/2.0.0": {
       "type": "package",
