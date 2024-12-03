@@ -8,3 +8,11 @@ AirTicketBooking_Backend/Migrations
 
 # Ignore appsettings.json in AirTicketBooking_Backend
 AirTicketBooking_Backend/appsettings.json
+
+
+#Ignoring Bin and Obj file of Testing Project
+AirTicketBooking_Testing/bin/
+AirTicketBooking_Testing/obj/
+
+# Ignore this folder if exists
+AitTicketBookingTestProject/
