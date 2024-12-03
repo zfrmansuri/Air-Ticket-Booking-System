@@ -126,12 +126,19 @@ namespace AirTicketBooking_Backend.Repositories
 
         public async Task DeleteProfile(string userId, string currentUserId)
         {
+            // Find the user to delete
             var userToDelete = await _userManager.FindByIdAsync(userId);
             if (userToDelete == null)
                 throw new KeyNotFoundException("User not found");
 
+            // Find the current user (the one performing the deletion)
+            var currentUser = await _userManager.FindByIdAsync(currentUserId);
+            if (currentUser == null)
+                throw new UnauthorizedAccessException("Current user not found");
+
             // Ensure that the current user is an Admin or the same as the user being deleted
-            if (currentUserId != userId && !await _userManager.IsInRoleAsync(userToDelete, "Admin"))
+            var isCurrentUserAdmin = await _userManager.IsInRoleAsync(currentUser, "Admin");
+            if (!isCurrentUserAdmin && currentUserId != userId)
             {
                 throw new UnauthorizedAccessException("You do not have permission to delete this profile.");
             }
@@ -187,6 +194,7 @@ namespace AirTicketBooking_Backend.Repositories
             // Commit final changes
             await _context.SaveChangesAsync();
         }
+
 
 
 
