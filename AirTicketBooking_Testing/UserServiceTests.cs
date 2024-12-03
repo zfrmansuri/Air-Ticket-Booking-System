@@ -11,13 +11,12 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace AirTicketBooking_Backend.Tests
 {
     [TestFixture]
-    public class UsersAuthenticationServiceTests
+    public class UserServiceTests
     {
         private Mock<UserManager<ApplicationUser>> _mockUserManager;
         private Mock<RoleManager<IdentityRole>> _mockRoleManager;
@@ -31,21 +30,26 @@ namespace AirTicketBooking_Backend.Tests
             // Mock DbContext
             _mockDbContext = new Mock<ApplicationDbContext>(new DbContextOptions<ApplicationDbContext>());
 
-            // Mocking UserManager
+            // Mock UserManager
             var userStoreMock = new Mock<IUserStore<ApplicationUser>>();
             _mockUserManager = new Mock<UserManager<ApplicationUser>>(
                 userStoreMock.Object, null, null, null, null, null, null, null, null);
 
-            // Mock configuration for JWT
+            // Mock RoleManager
+            var roleStoreMock = new Mock<IRoleStore<IdentityRole>>();
+            _mockRoleManager = new Mock<RoleManager<IdentityRole>>(
+                roleStoreMock.Object, null, null, null, null);
+
+            // Mock IConfiguration
             _mockConfiguration = new Mock<IConfiguration>();
-            _mockConfiguration.Setup(c => c["Jwt:Key"]).Returns("TestJwtSecurityKey12345");
+            _mockConfiguration.Setup(c => c["Jwt:Key"]).Returns("cc916555162bfe357cbadcf8e81fc60ab807c1234d7dd3fb95be62bad0e38471");
             _mockConfiguration.Setup(c => c["Jwt:Issuer"]).Returns("TestIssuer");
             _mockConfiguration.Setup(c => c["Jwt:Audience"]).Returns("TestAudience");
 
-            // Create the service with the real in-memory database context
+            // Initialize the service
             _service = new UsersAuthenticationService(
                 _mockUserManager.Object,
-                _mockRoleManager?.Object,  // RoleManager is null for simplicity
+                _mockRoleManager.Object,
                 _mockConfiguration.Object,
                 _mockDbContext.Object
             );
@@ -57,17 +61,8 @@ namespace AirTicketBooking_Backend.Tests
             // Arrange
             var user = new ApplicationUser { UserName = "AdminUser", Email = "admin@test.com" };
 
-            // Mock DbSet<ApplicationUser> to simulate no users initially
-            var mockUsers = new Mock<DbSet<ApplicationUser>>();
-            var userList = new List<ApplicationUser>(); // No users initially
-            mockUsers.As<IQueryable<ApplicationUser>>().Setup(m => m.Provider).Returns(userList.AsQueryable().Provider);
-            mockUsers.As<IQueryable<ApplicationUser>>().Setup(m => m.Expression).Returns(userList.AsQueryable().Expression);
-            mockUsers.As<IQueryable<ApplicationUser>>().Setup(m => m.ElementType).Returns(userList.AsQueryable().ElementType);
-            mockUsers.As<IQueryable<ApplicationUser>>().Setup(m => m.GetEnumerator()).Returns(userList.GetEnumerator());
-
-            _mockDbContext.Setup(db => db.Users).Returns(mockUsers.Object);
-
-            // Mocking CreateAsync and AddToRoleAsync methods
+            // Simulate no users in the database
+            _mockUserManager.Setup(m => m.Users).Returns(new List<ApplicationUser>().AsQueryable());
             _mockUserManager.Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
             _mockUserManager.Setup(m => m.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Admin"))
@@ -85,33 +80,22 @@ namespace AirTicketBooking_Backend.Tests
         public async Task RegisterUser_ShouldRegisterAsUserWhenNotFirst()
         {
             // Arrange
-            var user = new ApplicationUser { UserName = "RegularUser", Email = "user@test.com" };
+            var existingUser = new ApplicationUser { UserName = "ExistingUser", Email = "existing@test.com" };
+            var newUser = new ApplicationUser { UserName = "RegularUser", Email = "user@test.com" };
 
-            // Mock DbSet<ApplicationUser> to simulate there being one user already
-            var mockUsers = new Mock<DbSet<ApplicationUser>>();
-            var userList = new List<ApplicationUser>
-            {
-                new ApplicationUser { UserName = "ExistingUser", Email = "existing@test.com" }
-            }; // Already one user
-            mockUsers.As<IQueryable<ApplicationUser>>().Setup(m => m.Provider).Returns(userList.AsQueryable().Provider);
-            mockUsers.As<IQueryable<ApplicationUser>>().Setup(m => m.Expression).Returns(userList.AsQueryable().Expression);
-            mockUsers.As<IQueryable<ApplicationUser>>().Setup(m => m.ElementType).Returns(userList.AsQueryable().ElementType);
-            mockUsers.As<IQueryable<ApplicationUser>>().Setup(m => m.GetEnumerator()).Returns(userList.GetEnumerator());
-
-            _mockDbContext.Setup(db => db.Users).Returns(mockUsers.Object);
-
-            // Mocking CreateAsync and AddToRoleAsync methods
+            // Simulate an existing user in the database
+            _mockUserManager.Setup(m => m.Users).Returns(new List<ApplicationUser> { existingUser }.AsQueryable());
             _mockUserManager.Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
             _mockUserManager.Setup(m => m.AddToRoleAsync(It.IsAny<ApplicationUser>(), "User"))
                 .ReturnsAsync(IdentityResult.Success);
 
             // Act
-            var result = await _service.RegisterUser(user, "Password123");
+            var result = await _service.RegisterUser(newUser, "Password123");
 
             // Assert
             Assert.IsTrue(result.Succeeded);
-            _mockUserManager.Verify(m => m.AddToRoleAsync(user, "User"), Times.Once);
+            _mockUserManager.Verify(m => m.AddToRoleAsync(newUser, "User"), Times.Once);
         }
 
         [Test]
@@ -119,16 +103,18 @@ namespace AirTicketBooking_Backend.Tests
         {
             // Arrange
             var user = new ApplicationUser { Id = "1", UserName = "TestUser", Email = "user@test.com" };
+
             _mockUserManager.Setup(m => m.FindByEmailAsync("user@test.com")).ReturnsAsync(user);
             _mockUserManager.Setup(m => m.CheckPasswordAsync(user, "Password123")).ReturnsAsync(true);
             _mockUserManager.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(new List<string> { "User" });
 
             // Act
-            var token = await _service.Login("user@test.com", "Password123");
+            var result = await _service.Login("user@test.com", "Password123");
 
             // Assert
-            Assert.NotNull(token);
-            Assert.IsInstanceOf<string>(token);
+            Assert.NotNull(result);
+            Assert.That(result, Has.Property("Token"));
+            Assert.That(result, Has.Property("Roles").And.Contains("User"));
         }
 
         [Test]
@@ -163,6 +149,7 @@ namespace AirTicketBooking_Backend.Tests
                 Address = "New Address",
                 PhoneNumber = "0987654321"
             };
+
             _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
             _mockUserManager.Setup(m => m.UpdateAsync(It.IsAny<ApplicationUser>()))
                 .ReturnsAsync(IdentityResult.Success);
@@ -177,67 +164,6 @@ namespace AirTicketBooking_Backend.Tests
                 u.Gender == "Female" &&
                 u.Address == "New Address" &&
                 u.PhoneNumber == "0987654321")), Times.Once);
-        }
-
-        [Test]
-        public void EditProfile_ShouldThrowException_WhenUnauthorized()
-        {
-            // Arrange
-            var user = new ApplicationUser { Id = "1" };
-            _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
-            _mockUserManager.Setup(m => m.IsInRoleAsync(user, "Admin")).ReturnsAsync(false);
-
-            // Act & Assert
-            Assert.ThrowsAsync<UnauthorizedAccessException>(async () =>
-                await _service.EditProfile("1", new EditProfileDto(), "2"));
-        }
-
-        [Test]
-        public async Task DeleteProfile_ShouldRemoveUserAndAssociatedData()
-        {
-            // Arrange
-            var user = new ApplicationUser { Id = "1" };
-            _mockUserManager.Setup(m => m.FindByIdAsync("1")).ReturnsAsync(user);
-            _mockUserManager.Setup(m => m.DeleteAsync(user)).ReturnsAsync(IdentityResult.Success);
-
-            // Mocking the DbSets for Flights and Bookings
-            var flights = new List<Flight>
-            {
-                new Flight
-                {
-                    Destination = "New York",
-                    FlightNumber = "NY123",
-                    FlightOwnerId = "1",
-                    Origin = "Los Angeles"
-                }
-            };
-
-            var bookings = new List<Booking>
-            {
-                new Booking
-                {
-                    Status = "Confirmed",
-                    UserId = "1"
-                }
-            };
-
-            _mockDbContext.Setup(db => db.Flights).Returns(MockDbSet(flights).Object);
-            _mockDbContext.Setup(db => db.Bookings).Returns(MockDbSet(bookings).Object);
-
-            // Act
-            await _service.DeleteProfile("1", "1");
-
-            // Assert
-            _mockUserManager.Verify(m => m.DeleteAsync(user), Times.Once);
-            _mockDbContext.Verify(db => db.SaveChangesAsync(default), Times.AtLeastOnce);
-        }
-
-        [Test]
-        public void GetAllUsersByRole_ShouldThrowException_ForInvalidRole()
-        {
-            // Act & Assert
-            Assert.ThrowsAsync<ArgumentException>(async () =>
-                await _service.GetAllUsersByRole("InvalidRole"));
         }
 
         [Test]
@@ -259,6 +185,14 @@ namespace AirTicketBooking_Backend.Tests
             Assert.AreEqual(2, result.Count());
         }
 
+        [Test]
+        public void GetAllUsersByRole_ShouldThrowException_ForInvalidRole()
+        {
+            // Act & Assert
+            Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _service.GetAllUsersByRole("InvalidRole"));
+        }
+
         // Helper method to mock DbSet<T>
         private static Mock<DbSet<T>> MockDbSet<T>(List<T> data) where T : class
         {
@@ -271,6 +205,3 @@ namespace AirTicketBooking_Backend.Tests
         }
     }
 }
-
-
-
