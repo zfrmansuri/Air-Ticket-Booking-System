@@ -98,13 +98,17 @@ namespace AirTicketBooking_Backend.Repositories
         }
 
 
-        public async Task EditProfile(string userId, EditProfileDto updatedProfile, string currentUserId)
+        public async Task EditProfile(string userId, EditProfileDto updatedProfile, string? currentUserId)
         {
             var existingUser = await _userManager.FindByIdAsync(userId.ToString());
             if (existingUser == null) throw new KeyNotFoundException("User not found");
 
+            var currentUser = await _userManager.FindByIdAsync(currentUserId);
+            if (currentUser == null)
+                throw new UnauthorizedAccessException("Current user not found");
+
             // Check if the current user is Admin or the same as the user being edited
-            if (currentUserId != userId.ToString() && !await _userManager.IsInRoleAsync(existingUser, "Admin"))
+            if (currentUserId != userId.ToString() && !await _userManager.IsInRoleAsync(currentUser, "Admin"))
             {
                 throw new UnauthorizedAccessException("You do not have permission to edit this profile.");
             }
@@ -119,7 +123,7 @@ namespace AirTicketBooking_Backend.Repositories
             var result = await _userManager.UpdateAsync(existingUser);
             if (!result.Succeeded)
             {
-                throw new InvalidOperationException("Error updating user profile.");
+                throw new InvalidOperationException("Please Insert Valid Data");
             }
         }
 
