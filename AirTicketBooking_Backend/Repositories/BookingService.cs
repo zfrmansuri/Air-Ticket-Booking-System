@@ -15,37 +15,88 @@ namespace AirTicketBooking_Backend.Repositories
             _context = context;
         }
 
-        public async Task<int> BookTicket(Booking booking)
+        //public async Task<int> BookTicket(Booking booking)
+        //{
+        //    var flight = await _context.Flights.FindAsync(booking.FlightId);
+
+        //    if (flight == null) throw new KeyNotFoundException("Flight not found.");
+        //    if (booking.NumberOfSeats > flight.AvailableSeats) throw new InvalidOperationException("Insufficient seats available.");
+
+        //    // Get all available seats for the specified flight
+        //    var availableSeats = _context.FlightSeats
+        //        .Where(fs => fs.FlightId == booking.FlightId && fs.IsAvailable)
+        //        .ToList();
+
+
+        //    if (availableSeats.Count < booking.NumberOfSeats)
+        //        throw new InvalidOperationException($"Can't Meet No.of Seat requirement Only '{availableSeats.Count}' Seats are Availble");
+
+        //    // Select the exact number of seats needed
+        //    var seatsToReserve = availableSeats.Take(booking.NumberOfSeats).ToList();
+
+        //    // Mark each selected seat as unavailable
+        //    seatsToReserve.ForEach(fs => fs.IsAvailable = false);
+
+        //    // update total price of booking
+        //    booking.TotalPrice = flight.PricePerSeat * booking.NumberOfSeats;
+
+        //    // Save the booking
+        //    _context.Bookings.Add(booking);
+        //    await _context.SaveChangesAsync();
+
+        //    // Create booking details for each seat
+        //    foreach (var seat in seatsToReserve)
+        //    {
+        //        var bookingDetail = new BookingDetail
+        //        {
+        //            BookingId = booking.BookingId,
+        //            SeatNumber = seat.SeatNumber,
+        //            IsPaid = true
+        //        };
+        //        _context.BookingDetails.Add(bookingDetail);
+        //    }
+
+        //    // Update flight seat availability in the database
+        //    _context.FlightSeats.UpdateRange(seatsToReserve);
+
+        //    // Save changes to the database
+        //    await _context.SaveChangesAsync();
+
+        //    return booking.BookingId;
+        //}
+
+
+        public async Task<int> BookTicket(Booking booking, List<string> seatIds)
         {
-            var flight = await _context.Flights.FindAsync(booking.FlightId);
+            // Retrieve the flight with its seats
+            var flight = await _context.Flights
+                .Include(f => f.FlightSeats)
+                .FirstOrDefaultAsync(f => f.FlightId == booking.FlightId);
 
-            if (flight == null) throw new KeyNotFoundException("Flight not found.");
-            if (booking.NumberOfSeats > flight.AvailableSeats) throw new InvalidOperationException("Insufficient seats available.");
+            if (flight == null)
+                throw new KeyNotFoundException("Flight not found.");
 
-            // Get all available seats for the specified flight
-            var availableSeats = _context.FlightSeats
-                .Where(fs => fs.FlightId == booking.FlightId && fs.IsAvailable)
+            // Validate the requested seat IDs
+            var requestedSeats = flight.FlightSeats
+                .Where(fs => seatIds.Contains(fs.SeatNumber) && fs.IsAvailable)
                 .ToList();
 
+            if (requestedSeats.Count != seatIds.Count)
+                throw new InvalidOperationException("One or more requested seats are unavailable or invalid.");
 
-            if (availableSeats.Count < booking.NumberOfSeats)
-                throw new InvalidOperationException($"Can't Meet No.of Seat requirement Only '{availableSeats.Count}' Seats are Availble");
+            // Reserve the seats by marking them as unavailable
+            requestedSeats.ForEach(seat => seat.IsAvailable = false);
 
-            // Select the exact number of seats needed
-            var seatsToReserve = availableSeats.Take(booking.NumberOfSeats).ToList();
-
-            // Mark each selected seat as unavailable
-            seatsToReserve.ForEach(fs => fs.IsAvailable = false);
-
-            // update total price of booking
-            booking.TotalPrice = flight.PricePerSeat * booking.NumberOfSeats;
+            // Calculate the total price and set the number of seats in the booking
+            booking.TotalPrice = flight.PricePerSeat * seatIds.Count;
+            booking.NumberOfSeats = seatIds.Count; // Fix: Set NumberOfSeats here
 
             // Save the booking
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
-            // Create booking details for each seat
-            foreach (var seat in seatsToReserve)
+            // Create booking details for each reserved seat
+            foreach (var seat in requestedSeats)
             {
                 var bookingDetail = new BookingDetail
                 {
@@ -56,14 +107,16 @@ namespace AirTicketBooking_Backend.Repositories
                 _context.BookingDetails.Add(bookingDetail);
             }
 
-            // Update flight seat availability in the database
-            _context.FlightSeats.UpdateRange(seatsToReserve);
+            // Update the database with the reserved seats
+            _context.FlightSeats.UpdateRange(requestedSeats);
 
             // Save changes to the database
             await _context.SaveChangesAsync();
 
             return booking.BookingId;
         }
+
+
 
         public async Task<IEnumerable<Booking>> GetBookingHistory(string userId)
         {

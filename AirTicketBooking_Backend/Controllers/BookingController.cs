@@ -19,33 +19,77 @@ namespace AirTicketBooking_Backend.Controllers
         }
 
         // POST: api/Booking/BookTicket
+        //[HttpPost("BookTicket")]
+        //public async Task<IActionResult> BookTicket([FromBody] BookingDto bookingDto)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
+
+        //    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    if (userId == null)
+        //        return Unauthorized(new { Message = "User not authorized." });
+
+        //    var booking = new Booking
+        //    {
+        //        UserId = userId,
+        //        FlightId = bookingDto.FlightId,
+        //        BookingDate = DateTime.Now,
+        //        NumberOfSeats = bookingDto.NumberOfSeats,
+        //        Status = "Confirmed"
+        //    };
+
+        //    try
+        //    {
+        //        var bookingId = await _bookingService.BookTicket(booking);
+        //        return Ok(new { BookingId = bookingId, Message = "Booking completed successfully." });
+        //    }
+        //    catch (KeyNotFoundException ex)
+        //    {
+        //        return NotFound(new { Message = "Booking failed. The specified flight could not be found.", Details = ex.Message });
+        //    }
+        //    catch (InvalidOperationException ex)
+        //    {
+        //        return BadRequest(new { Message = "Booking failed due to invalid operation.", Details = ex.Message });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new { Message = "An error occurred while booking the ticket.", Details = ex.Message });
+        //    }
+        //}
+
+        // GET: api/Booking/GetBookingHistory_Of_LoggedUser
+
+
         [HttpPost("BookTicket")]
         public async Task<IActionResult> BookTicket([FromBody] BookingDto bookingDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            // Retrieve the authenticated user ID
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
                 return Unauthorized(new { Message = "User not authorized." });
 
-            var booking = new Booking
-            {
-                UserId = userId,
-                FlightId = bookingDto.FlightId,
-                BookingDate = DateTime.Now,
-                NumberOfSeats = bookingDto.NumberOfSeats,
-                Status = "Confirmed"
-            };
-
             try
             {
-                var bookingId = await _bookingService.BookTicket(booking);
+                // Create a new booking entity
+                var booking = new Booking
+                {
+                    UserId = userId,
+                    FlightId = bookingDto.FlightId,
+                    BookingDate = DateTime.Now,
+                    Status = "Confirmed"
+                };
+
+                // Pass the booking entity and the list of SeatIds to the service
+                var bookingId = await _bookingService.BookTicket(booking, bookingDto.SeatIds);
+
                 return Ok(new { BookingId = bookingId, Message = "Booking completed successfully." });
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(new { Message = "Booking failed. The specified flight could not be found.", Details = ex.Message });
+                return NotFound(new { Message = "Booking failed. The specified flight or seat(s) could not be found.", Details = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
@@ -57,7 +101,8 @@ namespace AirTicketBooking_Backend.Controllers
             }
         }
 
-        // GET: api/Booking/GetBookingHistory_Of_LoggedUser
+
+
         [HttpGet("GetBookingHistory_Of_LoggedUser")]
         public async Task<IActionResult> GetBookingHistory()
         {
