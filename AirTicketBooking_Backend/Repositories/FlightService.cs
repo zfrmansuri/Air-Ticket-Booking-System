@@ -160,5 +160,23 @@ namespace AirTicketBooking_Backend.Repositories
             if (flight == null) throw new KeyNotFoundException("Flight not found");
             return flight;
         }
+
+        public async Task<IEnumerable<Flight>> GetAllFlights(string ownerId)
+        {
+            // Check if the ownerId is provided, which should be the case for a FlightOwner
+            if (!string.IsNullOrEmpty(ownerId))
+            {
+                return await _dbContext.Flights
+                    .Where(f => f.FlightOwnerId == ownerId)
+                    .ToListAsync();
+            }
+
+            // If no ownerId is provided, then the user is an Admin, so show all flights
+            return await _dbContext.Flights
+                .Include(f => f.FlightSeats) 
+                .Include(f => f.FlightOwner) 
+                .ToListAsync();
+        }
+
     }
 }

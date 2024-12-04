@@ -10,5 +10,7 @@ namespace AirTicketBooking_Backend.Repositories
         Task RemoveFlight(int flightId, string userId, bool isAdmin);
         Task<IEnumerable<Flight>> SearchFlights(string origin, string destination, DateTime? date);
         Task UpdateFlight(int flightId, FlightDto updatedFlight, string userId);
+        Task<IEnumerable<Flight>> GetAllFlights (string ownerId);   //added 
+
     }
 }

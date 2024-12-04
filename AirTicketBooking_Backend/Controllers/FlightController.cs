@@ -19,8 +19,8 @@ namespace AirTicketBooking_Backend.Controllers
         }
 
         // POST: api/Flight/AddFlight
-        [HttpPost("AddFlight")]              // Only FlightOwner can add flights we can also add funtionality to allow 
-        [Authorize(Roles = "FlightOwner")]           //Admin to add file too but then we will have to pass the FlightOwner Id too in the Post request
+        [HttpPost("AddFlight")]
+        [Authorize(Roles = "FlightOwner")]
         public async Task<IActionResult> AddFlight([FromBody] FlightDto flightDto)
         {
             if (!ModelState.IsValid)
@@ -36,7 +36,7 @@ namespace AirTicketBooking_Backend.Controllers
                     DepartureDate = flightDto.DepartureDate,
                     AvailableSeats = flightDto.AvailableSeats,
                     PricePerSeat = flightDto.PricePerSeat,
-                    FlightOwnerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value            // Gets FlightOwnerId from the user's token //there can be a question mark to handle null values like above
+                    FlightOwnerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                 };
 
                 await _flightService.AddFlight(flight);
@@ -50,7 +50,7 @@ namespace AirTicketBooking_Backend.Controllers
 
         // PUT: api/Flight/UpdateFlight/{id}
         [HttpPut("UpdateFlight/{id}")]
-        [Authorize(Roles = "Admin,FlightOwner")]            //Only Admin can Update all Fight & Flight Owner can Update his Flight only.
+        [Authorize(Roles = "Admin,FlightOwner")]
         public async Task<IActionResult> UpdateFlight(int id, [FromBody] FlightDto flightDto)
         {
             if (!ModelState.IsValid)
@@ -78,7 +78,7 @@ namespace AirTicketBooking_Backend.Controllers
 
         // DELETE: api/Flight/RemoveFlight/{id}
         [HttpDelete("RemoveFlight/{id}")]
-        [Authorize(Roles = "Admin,FlightOwner")]             // Only Admin and FlightOwner can remove flights  
+        [Authorize(Roles = "Admin,FlightOwner")]
         public async Task<IActionResult> RemoveFlight(int id)
         {
             try
@@ -101,7 +101,7 @@ namespace AirTicketBooking_Backend.Controllers
 
         // GET: api/Flight/SearchFlights
         [HttpGet("SearchFlights")]
-        [AllowAnonymous]            // Publicly accessible
+        [AllowAnonymous]
         public async Task<IActionResult> SearchFlights([FromQuery] string origin, [FromQuery] string destination, [FromQuery] DateTime? date)
         {
             try
@@ -121,8 +121,8 @@ namespace AirTicketBooking_Backend.Controllers
 
         // GET: api/Flight/GetFlightDetails/{id}
         [HttpGet("GetFlightDetails/{id}")]
-        [AllowAnonymous]            // Publicly accessible
-        public async Task<IActionResult> GetFlightDetails(int id)            //GetFlightDetailsById
+        [AllowAnonymous]
+        public async Task<IActionResult> GetFlightDetails(int id)
         {
             try
             {
@@ -142,5 +142,49 @@ namespace AirTicketBooking_Backend.Controllers
                 return StatusCode(500, new { Message = "An error occurred while retrieving flight details.", Details = ex.Message });
             }
         }
+
+        [HttpGet("GetAllFlights")]
+        [Authorize(Roles = "Admin,FlightOwner")] // Only Admin and FlightOwner can access
+        public async Task<IActionResult> GetAllFlights()
+        {
+            try
+            {
+                // Get the current user ID
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new { Message = "Invalid access token." });
+
+                // Check if the user is an Admin
+                var isAdmin = User.IsInRole("Admin");
+
+                IEnumerable<Flight> flights;
+
+                if (isAdmin)
+                {
+                    // Admin can see all flights, so we pass null to GetAllFlights (no filtering by owner)
+                    flights = await _flightService.GetAllFlights(null);
+                }
+                else
+                {
+                    // FlightOwner can only see their own flights
+                    flights = await _flightService.GetAllFlights(userId);
+                }
+
+                // If no flights are found, return NotFound
+                if (flights == null || !flights.Any())
+                    return NotFound(new { Message = "No flights available." });
+
+                return Ok(flights);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = "Access denied. You do not have the necessary permissions.", Details = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving flights.", Details = ex.Message });
+            }
+        }
+
     }
 }
