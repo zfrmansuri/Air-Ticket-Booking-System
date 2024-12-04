@@ -186,5 +186,38 @@ namespace AirTicketBooking_Backend.Controllers
             }
         }
 
+
+        [HttpGet("GetAllFlightsForEveryone")]
+        public async Task<IActionResult> GetAllFlightsForEveryone()
+        {
+            try
+            {
+                var flights = await _flightService.GetAllFlightsForEveryone();
+
+                if (flights == null || !flights.Any())
+                {
+                    return NotFound(new { Message = "No flights are currently available." });
+                }
+
+                // Return only the necessary flight details
+                var flightDetails = flights.Select(f => new
+                {
+                    f.FlightId,
+                    f.FlightNumber,
+                    f.Origin,
+                    f.Destination,
+                    f.DepartureDate,
+                    f.AvailableSeats,
+                    f.PricePerSeat
+                }).ToList();
+
+                return Ok(flightDetails); // Return HTTP 200 with the selected flight data
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while fetching flights.", Details = ex.Message });
+            }
+        }
+
     }
 }

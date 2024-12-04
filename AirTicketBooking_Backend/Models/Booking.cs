@@ -27,10 +27,4 @@ namespace AirTicketBooking_Backend.Models
         public virtual ICollection<BookingDetail> BookingDetails { get; set; }
     }
 
-    //public enum BookingStatus
-    //{
-    //    Confirmed,
-    //    Canceled,
-    //    Pending
-    //}
 }

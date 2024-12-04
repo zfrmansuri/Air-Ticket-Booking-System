@@ -120,19 +120,41 @@ namespace AirTicketBooking_Backend.Repositories
             }
         }
 
+        //public async Task RemoveFlight(int flightId, string userId, bool isAdmin)
+        //{
+        //    var flight = await _dbContext.Flights.FindAsync(flightId);
+        //    if (flight == null)
+        //        throw new KeyNotFoundException("Flight not found");
+
+        //    // Check if the current user is Admin or Owener of the Flight
+        //    if (!isAdmin && flight.FlightOwnerId != userId)
+        //        throw new UnauthorizedAccessException("You are not authorized to remove this flight.");
+
+        //    _dbContext.Flights.Remove(flight);
+        //    await _dbContext.SaveChangesAsync();
+        //}
+
         public async Task RemoveFlight(int flightId, string userId, bool isAdmin)
         {
-            var flight = await _dbContext.Flights.FindAsync(flightId);
+            var flight = await _dbContext.Flights.Include(f => f.Bookings).FirstOrDefaultAsync(f => f.FlightId == flightId);
             if (flight == null)
                 throw new KeyNotFoundException("Flight not found");
 
-            // Check if the current user is Admin or Owener of the Flight
+            // Check if the current user is Admin or Owner of the Flight
             if (!isAdmin && flight.FlightOwnerId != userId)
                 throw new UnauthorizedAccessException("You are not authorized to remove this flight.");
 
+            // Remove related bookings first
+            if (flight.Bookings != null && flight.Bookings.Any())
+            {
+                _dbContext.Bookings.RemoveRange(flight.Bookings);
+            }
+
+            // Now remove the flight
             _dbContext.Flights.Remove(flight);
             await _dbContext.SaveChangesAsync();
         }
+
 
 
         public async Task<IEnumerable<Flight>> SearchFlights(string origin, string destination, DateTime? date)
@@ -173,9 +195,32 @@ namespace AirTicketBooking_Backend.Repositories
 
             // If no ownerId is provided, then the user is an Admin, so show all flights
             return await _dbContext.Flights
-                .Include(f => f.FlightSeats) 
-                .Include(f => f.FlightOwner) 
+                //.Include(f => f.FlightSeats) 
+                //.Include(f => f.FlightOwner) 
                 .ToListAsync();
+        }
+
+
+        public async Task<IEnumerable<Flight>> GetAllFlightsForEveryone()
+        {
+            try
+            {
+                // Fetch all flights with related FlightSeats and FlightOwner
+                var flights = await _dbContext.Flights
+                    .Include(f => f.FlightSeats)
+                    .Include(f => f.FlightOwner)
+                    .ToListAsync();
+
+                return flights;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("A database error occurred while retrieving flights.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An unexpected error occurred while retrieving flights.", ex);
+            }
         }
 
     }
