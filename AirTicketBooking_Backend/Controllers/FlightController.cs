@@ -42,6 +42,10 @@ namespace AirTicketBooking_Backend.Controllers
                 await _flightService.AddFlight(flight);
                 return Ok(new { Message = "Flight added successfully." });
             }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "An error occurred while adding the flight.", Details = ex.Message });

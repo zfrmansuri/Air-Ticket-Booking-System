@@ -22,6 +22,18 @@ namespace AirTicketBooking_Backend.Repositories
         public async Task AddFlight(Flight flight)
         {
             if (flight == null) throw new ArgumentNullException(nameof(flight));
+
+            // Validate that Origin and Destination are not the same
+            if (string.Equals(flight.Origin, flight.Destination, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("Origin and Destination cannot be the same.");
+
+            // Check if the flight number is unique
+            bool flightExists = await _dbContext.Flights
+                .AnyAsync(f => f.FlightNumber == flight.FlightNumber);
+
+            if (flightExists)
+                throw new InvalidOperationException($"A flight with the number '{flight.FlightNumber}' already exists.");
+
             await _dbContext.Flights.AddAsync(flight);
             await _dbContext.SaveChangesAsync();
 
@@ -31,6 +43,7 @@ namespace AirTicketBooking_Backend.Repositories
             await _dbContext.FlightSeats.AddRangeAsync(seats);
             await _dbContext.SaveChangesAsync();
         }
+
 
         // Method to generate seats
         private List<FlightSeat> GenerateSeats(int flightId, int seatCount, int startIndex = 1)
