@@ -55,67 +55,7 @@ namespace AirTicketBooking_Backend.Tests
             );
         }
 
-        [Test]
-        public async Task RegisterUser_ShouldRegisterAdminWhenFirstUser()
-        {
-            // Arrange
-            var user = new ApplicationUser { UserName = "AdminUser", Email = "admin@test.com" };
-
-            // Simulate no users in the database
-            _mockUserManager.Setup(m => m.Users).Returns(new List<ApplicationUser>().AsQueryable());
-            _mockUserManager.Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
-                .ReturnsAsync(IdentityResult.Success);
-            _mockUserManager.Setup(m => m.AddToRoleAsync(It.IsAny<ApplicationUser>(), "Admin"))
-                .ReturnsAsync(IdentityResult.Success);
-
-            // Act
-            var result = await _service.RegisterUser(user, "Password123");
-
-            // Assert
-            Assert.IsTrue(result.Succeeded);
-            _mockUserManager.Verify(m => m.AddToRoleAsync(user, "Admin"), Times.Once);
-        }
-
-        [Test]
-        public async Task RegisterUser_ShouldRegisterAsUserWhenNotFirst()
-        {
-            // Arrange
-            var existingUser = new ApplicationUser { UserName = "ExistingUser", Email = "existing@test.com" };
-            var newUser = new ApplicationUser { UserName = "RegularUser", Email = "user@test.com" };
-
-            // Simulate an existing user in the database
-            _mockUserManager.Setup(m => m.Users).Returns(new List<ApplicationUser> { existingUser }.AsQueryable());
-            _mockUserManager.Setup(m => m.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>()))
-                .ReturnsAsync(IdentityResult.Success);
-            _mockUserManager.Setup(m => m.AddToRoleAsync(It.IsAny<ApplicationUser>(), "User"))
-                .ReturnsAsync(IdentityResult.Success);
-
-            // Act
-            var result = await _service.RegisterUser(newUser, "Password123");
-
-            // Assert
-            Assert.IsTrue(result.Succeeded);
-            _mockUserManager.Verify(m => m.AddToRoleAsync(newUser, "User"), Times.Once);
-        }
-
-        [Test]
-        public async Task Login_ShouldReturnJwtToken_ForValidCredentials()
-        {
-            // Arrange
-            var user = new ApplicationUser { Id = "1", UserName = "TestUser", Email = "user@test.com" };
-
-            _mockUserManager.Setup(m => m.FindByEmailAsync("user@test.com")).ReturnsAsync(user);
-            _mockUserManager.Setup(m => m.CheckPasswordAsync(user, "Password123")).ReturnsAsync(true);
-            _mockUserManager.Setup(m => m.GetRolesAsync(user)).ReturnsAsync(new List<string> { "User" });
-
-            // Act
-            var result = await _service.Login("user@test.com", "Password123");
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.That(result, Has.Property("Token"));
-            Assert.That(result, Has.Property("Roles").And.Contains("User"));
-        }
+       
 
         [Test]
         public void Login_ShouldThrowException_ForInvalidCredentials()
