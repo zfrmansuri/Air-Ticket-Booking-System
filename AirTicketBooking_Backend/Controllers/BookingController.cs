@@ -102,6 +102,29 @@ namespace AirTicketBooking_Backend.Controllers
         }
 
 
+        //[HttpGet("GetBookingHistory_Of_LoggedUser")]
+        //public async Task<IActionResult> GetBookingHistory()
+        //{
+        //    try
+        //    {
+        //        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //        if (string.IsNullOrEmpty(userId))
+        //            return Unauthorized(new { Message = "User not authorized." });
+
+        //        var bookings = await _bookingService.GetBookingHistory(userId);
+
+        //        if (bookings == null || !bookings.Any())
+        //            return NotFound(new { Message = "No booking history found for the current user." });
+
+        //        return Ok(bookings); // Return DTO response
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new { Message = "An error occurred while retrieving booking history.", Details = ex.Message });
+        //    }
+        //}
+
+
 
         [HttpGet("GetBookingHistory_Of_LoggedUser")]
         public async Task<IActionResult> GetBookingHistory()
@@ -112,18 +135,21 @@ namespace AirTicketBooking_Backend.Controllers
                 if (string.IsNullOrEmpty(userId))
                     return Unauthorized(new { Message = "User not authorized." });
 
-                var bookings = await _bookingService.GetBookingHistory(userId);
+                var bookingHistory = await _bookingService.GetBookingHistory(userId);
 
-                if (bookings == null || !bookings.Any())
+                if (bookingHistory == null || !bookingHistory.Any())
                     return NotFound(new { Message = "No booking history found for the current user." });
 
-                return Ok(bookings);
+                return Ok(bookingHistory);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "An error occurred while retrieving booking history.", Details = ex.Message });
             }
         }
+
+
+
 
         // DELETE: api/Booking/CancelBooking/{id}
         [HttpDelete("CancelBooking")]

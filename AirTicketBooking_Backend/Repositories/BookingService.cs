@@ -117,13 +117,44 @@ namespace AirTicketBooking_Backend.Repositories
         }
 
 
+        //public async Task<IEnumerable<BookingHistoryDto>> GetBookingHistory(string userId)
+        //{
+        //    return await _context.Bookings
+        //        .Where(b => b.UserId == userId)
+        //        .Include(b => b.Flight) // Include the related Flight entity
+        //        .Select(b => new BookingHistoryDto
+        //        {
+        //            BookingId = b.BookingId,
+        //            BookingDate = b.BookingDate,
+        //            NumberOfSeats = b.NumberOfSeats,
+        //            TotalPrice = b.TotalPrice,
+        //            Status = b.Status,
+        //            Origin = b.Flight.Origin,
+        //            Destination = b.Flight.Destination
+        //        })
+        //        .ToListAsync();
+        //}
 
-        public async Task<IEnumerable<Booking>> GetBookingHistory(string userId)
+        public async Task<IEnumerable<BookingHistoryDto>> GetBookingHistory(string userId)
         {
-            return await Task.FromResult(_context.Bookings
+            return await _context.Bookings
                 .Where(b => b.UserId == userId)
-                .ToList());
+                .Include(b => b.Flight) // Include related flight data
+                .Select(b => new BookingHistoryDto
+                {
+                    BookingId = b.BookingId,
+                    BookingDate = b.BookingDate,
+                    NumberOfSeats = b.NumberOfSeats,
+                    TotalPrice = b.TotalPrice,
+                    Status = b.Status,
+                    Origin = b.Flight.Origin,
+                    Destination = b.Flight.Destination,
+                    FlightNumber = b.Flight.FlightNumber // Map FlightNumber
+                })
+                .ToListAsync();
         }
+
+
 
 
         public async Task CancelBooking(int bookingId)

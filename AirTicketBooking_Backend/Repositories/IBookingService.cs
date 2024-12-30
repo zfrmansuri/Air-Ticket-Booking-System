@@ -9,7 +9,8 @@ namespace AirTicketBooking_Backend.Repositories
         //Task<int> BookTicket(Booking booking);
 
         Task<int> BookTicket(Booking booking, List<string> seatIds);
-        Task<IEnumerable<Booking>> GetBookingHistory(string userId);
+        //Task<IEnumerable<Booking>> GetBookingHistory(string userId);
+        Task<IEnumerable<BookingHistoryDto>> GetBookingHistory(string userId);
         Task CancelBooking(int bookingId);
         Task<IEnumerable<BookingRetrievalDto>> ListAllBooking(string flightOwnerId);
         Task<IEnumerable<BookingRetrievalDto>> ListAllBookingsForAdmin();
