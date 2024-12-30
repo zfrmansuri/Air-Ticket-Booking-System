@@ -212,7 +212,8 @@ namespace AirTicketBooking_Backend.Controllers
                     f.Destination,
                     f.DepartureDate,
                     f.AvailableSeats,
-                    f.PricePerSeat
+                    f.PricePerSeat,
+                    //f.FlightOwner
                 }).ToList();
 
                 return Ok(flightDetails); // Return HTTP 200 with the selected flight data
@@ -220,6 +221,24 @@ namespace AirTicketBooking_Backend.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "An error occurred while fetching flights.", Details = ex.Message });
+            }
+        }
+
+        [HttpGet("GetUserNameById")]
+        public async Task<IActionResult> GetUsernameById(string id)
+        {
+            try
+            {
+                var username = await _flightService.GetUsernameByIdAsync(id);
+                if (string.IsNullOrEmpty(username))
+                {
+                    return NotFound(new { Message = "User not found" });
+                }
+                return Ok(new { Username = username });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred", Details = ex.Message });
             }
         }
 

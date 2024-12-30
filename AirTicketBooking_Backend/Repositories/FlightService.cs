@@ -208,10 +208,10 @@ namespace AirTicketBooking_Backend.Repositories
 
             // If no ownerId is provided, then the user is an Admin, so show all flights
             return await _dbContext.Flights
-                //.Include(f => f.FlightSeats) 
-                //.Include(f => f.FlightOwner) 
-                .ToListAsync();
+                    //.Include(f => f.FlightOwner)
+                    .ToListAsync();
         }
+
 
 
         public async Task<IEnumerable<Flight>> GetAllFlightsForEveryone()
@@ -234,6 +234,13 @@ namespace AirTicketBooking_Backend.Repositories
             {
                 throw new Exception("An unexpected error occurred while retrieving flights.", ex);
             }
+        }
+
+
+        public async Task<string> GetUsernameByIdAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            return user?.UserName;
         }
 
     }

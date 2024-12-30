@@ -12,6 +12,8 @@ namespace AirTicketBooking_Backend.Repositories
         Task UpdateFlight(int flightId, FlightDto updatedFlight, string userId);
         Task<IEnumerable<Flight>> GetAllFlights (string ownerId);   //added 
 
+        Task<string> GetUsernameByIdAsync(string id);
+
         Task<IEnumerable<Flight>> GetAllFlightsForEveryone();
 
     }
